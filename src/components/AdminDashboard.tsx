@@ -17,7 +17,7 @@ import {
   Sun,
   Moon,
 } from 'lucide-react';
-import { getSupabaseClient, isSupabaseConfigured } from '../lib/supabase';
+import { getSupabaseClient } from '../lib/supabase';
 import {
   addStaticNominee,
   apiOrStaticFallback,
@@ -189,30 +189,6 @@ export function AdminDashboard({
       fetchOverview();
     }
   }, [voterSession.isAdmin, selectedYearId]);
-
-  const handleBootstrapAdmin = async () => {
-    setBusy(true);
-    setBanner(null);
-    try {
-      const token = await getToken();
-      const res = await fetch('/api/admin/bootstrap', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const ct = res.headers.get('content-type') || '';
-      if (!ct.includes('application/json')) {
-        throw new Error('Ask a super_admin to add your email to administrator_roles in Supabase.');
-      }
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || 'Bootstrap failed.');
-      await onSessionUpdated();
-      setBanner({ type: 'ok', text: 'Initial Super Admin access granted.' });
-    } catch (err) {
-      setBanner({ type: 'err', text: err instanceof Error ? err.message : 'Bootstrap failed.' });
-    } finally {
-      setBusy(false);
-    }
-  };
 
   const uploadToStorage = async (
     bucket: 'player-skins' | 'category-icons' | 'avatars',
@@ -540,127 +516,31 @@ export function AdminDashboard({
     }
   };
 
-  const [dbStatus, setDbStatus] = useState<{
-    configured: boolean;
-    serviceRole: boolean;
-    tablesReady: boolean;
-  } | null>(null);
-  const [sqlCopied, setSqlCopied] = useState(false);
-
-  useEffect(() => {
-    fetch('/api/public/db-check')
-      .then(async (r) => {
-        const ct = r.headers.get('content-type') || '';
-        if (r.ok && ct.includes('application/json')) {
-          return r.json();
-        }
-        throw new Error('Static host');
-      })
-      .then((d) => setDbStatus(d))
-      .catch(async () => {
-        const supabase = getSupabaseClient();
-        if (!supabase) {
-          setDbStatus({ configured: isSupabaseConfigured, serviceRole: false, tablesReady: false });
-          return;
-        }
-        const { error } = await supabase.from('awards_years').select('id').limit(1);
-        setDbStatus({ configured: true, serviceRole: false, tablesReady: !error });
-      });
-  }, []);
-
-  const handleCopySql = async () => {
-    try {
-      const res = await fetch('/api/public/setup-sql');
-      const ct = res.headers.get('content-type') || '';
-      if (!ct.includes('application/json')) {
-        throw new Error('Setup SQL endpoint is only available when running the Express backend.');
-      }
-      const { sql } = await res.json();
-      await navigator.clipboard.writeText(sql);
-      setSqlCopied(true);
-      window.setTimeout(() => setSqlCopied(false), 3000);
-    } catch (err) {
-      setBanner({ type: 'err', text: err instanceof Error ? err.message : 'Failed to copy SQL schema.' });
-    }
-  };
-
   if (!voterSession.isAdmin) {
     return (
-      <main className="mx-auto max-w-2xl px-4 py-12 space-y-6">
+      <main className="mx-auto max-w-xl px-4 py-16">
         <div className="rounded-2xl border border-[var(--mc-border-strong)] bg-[var(--mc-surface)] p-8 text-center">
           <Lock className="mx-auto h-10 w-10 text-[var(--mc-accent)]" />
           <h1 className="mt-4 font-display text-2xl font-bold text-[var(--mc-ink)]">
             Protected Administrator Console
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-[var(--mc-ink-muted)]">
-            Only authorized MultiCraft Awards administrators can manage dynamic categories, 3D player skins,
-            nominees, and official result publications.
+            {voterSession.voter
+              ? `Signed in as ${voterSession.voter.google_email || voterSession.voter.display_name}. This account does not have administrator permissions.`
+              : 'Only authorized MultiCraft Awards administrators can access this console.'}
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
-            {!voterSession.voter ? (
-              <button
-                type="button"
-                onClick={onOpenAuthModal}
-                className="h-10 rounded-lg bg-[var(--mc-accent)] px-5 text-sm font-semibold text-[var(--mc-accent-contrast)]"
-              >
-                Sign In First
-              </button>
-            ) : (
-              <button
-                type="button"
-                disabled={busy}
-                onClick={handleBootstrapAdmin}
-                className="h-10 rounded-lg bg-[var(--mc-accent)] px-5 text-sm font-semibold text-[var(--mc-accent-contrast)] disabled:opacity-50"
-              >
-                {busy ? 'Checking...' : 'Claim Initial Super Admin (First Setup)'}
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={onOpenAuthModal}
+              className="h-10 rounded-lg bg-[var(--mc-accent)] px-5 text-sm font-semibold text-[var(--mc-accent-contrast)] transition-colors hover:bg-[var(--mc-accent-hover)]"
+            >
+              {voterSession.voter ? 'Switch Account' : 'Sign In'}
+            </button>
           </div>
           {banner && (
             <p className="mt-4 text-xs font-medium text-[var(--mc-accent)]">{banner.text}</p>
           )}
-        </div>
-
-        {/* Supabase Setup Checklist */}
-        <div className="rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface)] p-6">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--mc-border)] pb-4">
-            <div>
-              <h2 className="font-display text-base font-bold text-[var(--mc-ink)]">
-                Supabase Backend Setup Checklist
-              </h2>
-              <p className="text-xs text-[var(--mc-ink-muted)]">
-                All 17 tables, RLS policies, storage buckets, and the 9 default categories are packaged in one SQL script.
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={handleCopySql}
-              className="h-9 rounded-lg border border-[var(--mc-accent-border)] bg-[var(--mc-accent-soft)] px-3.5 text-xs font-semibold text-[var(--mc-accent)] whitespace-nowrap shrink-0"
-            >
-              {sqlCopied ? 'Copied SQL Script!' : 'Copy Setup SQL'}
-            </button>
-          </div>
-
-          <ul className="mt-4 space-y-2.5 text-xs">
-            <li className="flex items-center justify-between">
-              <span className="text-[var(--mc-ink)]">1. Supabase URL & Anon Key</span>
-              <span className={dbStatus?.configured ? 'font-semibold text-[var(--mc-accent)]' : 'text-[var(--mc-ink-muted)]'}>
-                {dbStatus?.configured ? 'Connected' : 'Pending Credentials'}
-              </span>
-            </li>
-            <li className="flex items-center justify-between">
-              <span className="text-[var(--mc-ink)]">2. Server Service Role Key</span>
-              <span className={dbStatus?.serviceRole ? 'font-semibold text-[var(--mc-accent)]' : 'text-[var(--mc-ink-muted)]'}>
-                {dbStatus?.serviceRole ? 'Configured' : 'Pending Key'}
-              </span>
-            </li>
-            <li className="flex items-center justify-between">
-              <span className="text-[var(--mc-ink)]">3. Database Tables & Default Categories</span>
-              <span className={dbStatus?.tablesReady ? 'font-semibold text-[var(--mc-accent)]' : 'text-[var(--mc-ink-muted)]'}>
-                {dbStatus?.tablesReady ? 'Initialized' : 'Run Copied SQL in Supabase SQL Editor'}
-              </span>
-            </li>
-          </ul>
         </div>
       </main>
     );

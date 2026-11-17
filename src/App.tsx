@@ -270,21 +270,23 @@ export default function App() {
 
       let isAdmin = false;
       let adminRole: 'super_admin' | 'awards_admin' | 'moderator' | null = null;
-      if (email) {
-        try {
-          const { data: roleData } = await supabase
-            .from('administrator_roles')
-            .select('role, is_active')
-            .eq('email', email)
-            .eq('is_active', true)
-            .maybeSingle();
-          if (roleData) {
-            isAdmin = true;
-            adminRole = roleData.role;
-          }
-        } catch {
-          // Ignore RLS denial for non-admins
+      try {
+        const filter = email
+          ? `auth_user_id.eq.${authUser.id},email.eq.${email}`
+          : `auth_user_id.eq.${authUser.id}`;
+        const { data: roleData } = await supabase
+          .from('administrator_roles')
+          .select('role, is_active')
+          .or(filter)
+          .eq('is_active', true)
+          .limit(1)
+          .maybeSingle();
+        if (roleData) {
+          isAdmin = true;
+          adminRole = roleData.role;
         }
+      } catch {
+        // Ignore RLS denial for non-admins
       }
 
       const nowIso = new Date().toISOString();
