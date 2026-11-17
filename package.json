@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "description": "MultiCraft Awards — Official annual community awards, verified voting portal, and interactive 3D Minecraft skin showcase for the MultiCraft Build and Mine community.",
-  "homepage": "https://kyranzoog.github.io/multicraft-awards",
+  "homepage": "https://kyranzoog.github.io/multicraft_awards",
   "type": "module",
   "engines": {
     "node": ">=20"
@@ -12,7 +12,7 @@
     "dev": "tsx server.ts",
     "start": "node server.ts",
     "build": "vite build",
-    "build:pages": "VITE_BASE_PATH=/multicraft-awards/ VITE_PUBLIC_SITE_URL=https://kyranzoog.github.io/multicraft-awards vite build",
+    "build:pages": "VITE_BASE_PATH=/multicraft_awards/ VITE_PUBLIC_SITE_URL=https://kyranzoog.github.io/multicraft_awards vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit"
@@ -38,7 +38,7 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "autoprefixer": "^10.4.21",
-    "esbuild": "^0.25.0",
+    "esbuild": "^0.28.0",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.21.0",
     "typescript": "^7.0.2",
