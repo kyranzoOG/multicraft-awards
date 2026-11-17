@@ -1,0 +1,77 @@
+# MultiCraft Awards — Search & AI Crawler Directives
+
+User-agent: *
+Allow: /
+Allow: /categories
+Allow: /vote
+Allow: /winners
+Allow: /llms.txt
+Allow: /llms-full.txt
+Disallow: /admin
+Disallow: /auth/callback
+Disallow: /api/
+
+# Major Search Engines
+User-agent: Googlebot
+Allow: /
+Disallow: /admin
+Disallow: /auth/callback
+Disallow: /api/
+
+User-agent: Bingbot
+Allow: /
+Disallow: /admin
+Disallow: /auth/callback
+Disallow: /api/
+
+# AI / LLM Assistants & Search Crawlers
+User-agent: GPTBot
+Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+Disallow: /admin
+Disallow: /api/
+
+User-agent: OAI-SearchBot
+Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+Disallow: /admin
+Disallow: /api/
+
+User-agent: ChatGPT-User
+Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+Disallow: /admin
+Disallow: /api/
+
+User-agent: ClaudeBot
+Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+Disallow: /admin
+Disallow: /api/
+
+User-agent: PerplexityBot
+Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+Disallow: /admin
+Disallow: /api/
+
+User-agent: Google-Extended
+Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+Disallow: /admin
+Disallow: /api/
+
+User-agent: Applebot-Extended
+Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+Disallow: /admin
+Disallow: /api/
+
+Sitemap: __SITE_ORIGIN__/sitemap.xml

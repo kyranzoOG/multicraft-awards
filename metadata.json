@@ -1,0 +1,6 @@
+{
+  "name": "MultiCraft Awards",
+  "description": "Annual community awards platform for the MultiCraft Build and Mine gaming community with secure Google and Discord voting, dynamic categories, automatic scoring, and interactive 3D player profiles.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

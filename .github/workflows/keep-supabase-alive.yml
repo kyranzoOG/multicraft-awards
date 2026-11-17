@@ -1,0 +1,48 @@
+name: Keep Supabase Project Active
+
+on:
+  schedule:
+    # Runs every 3 days at 00:00 UTC to prevent Supabase free-tier 7-day inactivity sleep
+    - cron: '0 0 */3 * *'
+  workflow_dispatch:
+
+jobs:
+  ping-supabase:
+    name: Query Supabase REST API
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase database via REST API
+        env:
+          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || secrets.VITE_SUPABASE_PUBLISHABLE_KEY || secrets.VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY || secrets.SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "ERROR: Missing Supabase secrets."
+            echo "Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in GitHub Repo Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
+
+          BASE_URL="${SUPABASE_URL%/}"
+          echo "Pinging Supabase at $(date -u +%Y-%m-%dT%H:%M:%SZ)..."
+
+          CAT_STATUS=$(curl -sS -o /tmp/categories_ping.json -w "%{http_code}" \
+            "${BASE_URL}/rest/v1/categories?select=id,name&limit=1" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}")
+
+          YEAR_STATUS=$(curl -sS -o /tmp/years_ping.json -w "%{http_code}" \
+            "${BASE_URL}/rest/v1/awards_years?select=id,year_label&limit=1" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}")
+
+          echo "HTTP responses -> categories: ${CAT_STATUS}, awards_years: ${YEAR_STATUS}"
+
+          if [ "$CAT_STATUS" -ge 400 ] || [ "$YEAR_STATUS" -ge 400 ]; then
+            echo "Supabase keep-alive request failed."
+            cat /tmp/categories_ping.json
+            echo ""
+            cat /tmp/years_ping.json
+            exit 1
+          fi
+
+          echo "Supabase keep-alive query completed successfully."

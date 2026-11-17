@@ -1,0 +1,23 @@
+# MultiCraft Awards
+
+> Official annual community honors, voting platform, and 3D player showcase for the MultiCraft Build and Mine gaming community.
+
+## Pages
+- [Home](__SITE_ORIGIN__/): Displays all active award categories with Top 1–3 (or Top 1–10 for Best YouTuber) ranked winner/position cards showing player names and Minecraft character skins.
+- [Categories](__SITE_ORIGIN__/categories): Full directory of award categories, descriptions, custom scoring rules, and nominated players/teams with 3D skin inspection.
+- [Vote](__SITE_ORIGIN__/vote): Authenticated ballot submission page supporting Google OAuth and email verification.
+- [Winners](__SITE_ORIGIN__/winners): Year-by-year archive of published category winners and the Overall MultiCraft Player of the Year leaderboard.
+
+## Default Award Categories
+- Best Editor (Top 3)
+- Best Streamer (Top 3)
+- Best Mobile Content Creator (Top 3)
+- Best Builder (Top 3)
+- Best PvPer (Top 3)
+- Best Duo / Team (Top 3, team category awarding full position points to all registered team members)
+- Best YouTuber (Top 10)
+- Best FPV Player (Top 3)
+- Best Bluestoner (Top 3)
+
+## Full Reference
+- [Detailed Documentation](__SITE_ORIGIN__/llms-full.txt): Scoring system, authentication eligibility rules, and 3D skin profile architecture.

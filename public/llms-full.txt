@@ -1,0 +1,39 @@
+# MultiCraft Awards — Complete Reference for AI & Search Agents
+
+MultiCraft Awards is the official annual community awards platform dedicated to the **MultiCraft Build and Mine** gaming community.
+
+## 1. Core Purpose & Automatic Annual Cycle
+- Automatically aligns the active edition with the current calendar year (`2026`, advancing automatically to `2027`, etc.) while preserving historical editions and published winners.
+- Calculates category placements, custom position points, and the **Overall MultiCraft Player of the Year** ranking automatically.
+
+## 2. Public Routes
+- `/` — Categories showcase displaying each active category heading followed by its ranked cards (`Top 1`–`Top 3`, or `Top 1`–`Top 10` for `Best YouTuber`), each featuring rank, player/team name, and Minecraft character preview.
+- `/categories` — Dedicated category explorer with category descriptions, position point rules, and all nominees. Clicking any nominee opens an interactive 3D Minecraft character profile viewer.
+- `/vote` — Secure voting portal with single-vote-per-category-per-year enforcement.
+- `/winners` — Published results archive and Overall MultiCraft Player of the Year leaderboard across years.
+
+## 3. Categories & Dynamic Scoring
+Default categories:
+1. Best Editor (3 positions)
+2. Best Streamer (3 positions)
+3. Best Mobile Content Creator (3 positions)
+4. Best Builder (3 positions)
+5. Best PvPer (3 positions)
+6. Best Duo / Team (3 positions, team category)
+7. Best YouTuber (10 positions)
+8. Best FPV Player (3 positions)
+9. Best Bluestoner (3 positions)
+
+Default scoring rule per category:
+- 1st place: 5 points
+- 2nd place: 2 points
+- 3rd place: 3 points
+- Additional positions (e.g., 4th–10th in Best YouTuber): administrator-configurable (defaults to 0 points).
+- Duo / Team wins award full placement points to every registered individual team member toward their Overall Player of the Year total.
+
+## 4. Voter Authentication & Email Verification
+- **Google OAuth & Email Verification**: Voters sign in with Google or register via Email & Password and confirm their email address.
+- **Anti-Duplicate Protection**: Database unique constraints enforce one vote per voter per category per year.
+
+## 5. Interactive 3D Skins
+- Supports Classic (`64x64` / `64x32`, 4px arms) and Slim (`3px` arms) Minecraft skin textures rendered in interactive 3D (`skinview3d` / Three.js) with natural idle animation and orbit rotation.
